@@ -1,0 +1,20 @@
+{
+  "name": "mainmodule",
+  "version": "1.0.0",
+  "description": "This is the main module",
+  "main": "./js/Main.js",
+  "scripts": {
+    "lint":"eslint ./js/*.js",
+    "js":"browserify ./js/Main.js > ./release/main.js",
+    "less":"lessc ./styles/styles.less ./release/styles.css",
+    "minijs":"babili ./release/main.js > ./release/main.min.js",
+    "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.min.css",
+    "build":"npm run lint && npm run js && npm run minijs && npm run minicss",
+    "start":"",
+    "debug":"npm run lint && npm run js",
+    "clean":"del /Q \".\\release\\styles.min.css\" && del /Q \".\\release\\main.min.js\" && del /Q \".\\release\\main.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stefan Fuhrmann",
+  "license": "ISC"
+}
