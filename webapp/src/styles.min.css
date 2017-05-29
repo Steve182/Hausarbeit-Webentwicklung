@@ -1,1 +1,1 @@
-#map{width:75%;height:100%}#output{display:flex}
+#map{width:75%;height:100%;float:left}#list{width:25%;height:100%;float:right;color:red}#output{display:flex}
