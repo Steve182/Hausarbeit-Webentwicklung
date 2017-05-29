@@ -1,0 +1,9 @@
+#Compiled sources#
+##################
+main.min.js
+styles.min.css
+main.js
+
+#Lint config#
+#################
+.eslintrc.json
