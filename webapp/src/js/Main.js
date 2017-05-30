@@ -9,7 +9,7 @@
 	}
 
 	function loadTours() {
-		console.log("Hallo");
+		
 	}
 
 	initMap();
