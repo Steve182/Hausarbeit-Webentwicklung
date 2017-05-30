@@ -11,7 +11,7 @@
     "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.min.css",
     "build":"npm run lint && npm run js && npm run minijs && npm run minicss",
     "start":"http-server ./release",
-    "debug":"npm run clean && npm run lint && npm run js",
+    "debug":"npm run clean && npm run lint && npm run js && npm run less",
     "clean":"del /Q \".\\release\\styles.min.css\" && del /Q \".\\release\\main.min.js\" && del /Q \".\\main.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
