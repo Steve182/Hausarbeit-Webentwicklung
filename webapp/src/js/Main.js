@@ -14,15 +14,23 @@ function initMap() {
 	};
 
 	new google.maps.Map(document.getElementById("map"), options);
+	console.log("Map initialized!");
 }
 
 function loadTours() {
 	request({
-		url: "http://localhost:8081/routes",
+		url: "http://localhost:8080/tracks",
 		json: true
 	}, function (error, response, body) {
 		if (error) {
 			console.log("Failed to fetch routes: " + error);
+		}
+		else {
+			console.log(response);
+			let data = JSON.parse(response.body);
+			/*for (let item in data) {
+				console.log(item + ": " + data[item]);
+			}*/
 		}
 	});
 }

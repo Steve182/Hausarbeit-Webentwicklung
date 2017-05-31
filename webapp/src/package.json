@@ -4,14 +4,13 @@
   "description": "This is the main module",
   "main": "./js/Main.js",
   "scripts": {
-    "lint":"eslint ./js/*.js ../../server/*.js",
+    "lint":"eslint ./js/*.js",
     "js":"browserify ./js/Main.js > ./main.js",
     "less":"lessc ./styles/styles.less ./styles.css",
     "minijs":"babili ./main.js > ./release/main.min.js",
     "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.min.css",
-    "build":"npm run lint && npm run js && npm run minijs && npm run minicss",
-    "start":"http-server ./release -p 8080",
-    "startNode": "node ../../server/MainServer.js",
+    "build":"npm run lint && npm run js && npm run minijs && npm run minicss && cp ./js/MainServer.js ./release/mainserver.js",
+    "start":"node ./release/mainserver.js 8080",
     "debug":"npm run clean && npm run lint && npm run js && npm run less",
     "clean":"del /Q \".\\release\\styles.min.css\" && del /Q \".\\release\\main.min.js\" && del /Q \".\\main.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
