@@ -1,20 +1,19 @@
 var request = require("request");
+var google = require("google-maps");
 
 function main() {
-	initMap();
+	google.KEY = "AIzaSyDHMcOZm-IQCO9n9fExRpuOOfc8I32JvvE";
+	google.load(function (g) {
+		let trier = { lat: 49.761784, lng: 6.659463 };
+		let options = {
+			zoom: 11,
+			center: trier
+		};
+
+		new g.maps.Map(document.getElementById("map"), options);
+		console.log("Map initialized!");
+	});
 	loadTours();
-}
-
-function initMap() {
-	let trier = { lat: 49.761784, lng: 6.659463 };
-
-	let options = {
-		zoom: 11,
-		center: trier
-	};
-
-	new google.maps.Map(document.getElementById("map"), options);
-	console.log("Map initialized!");
 }
 
 function loadTours() {
