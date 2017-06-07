@@ -27,9 +27,13 @@ function loadTours() {
 		else {
 			console.log(response);
 			let data = JSON.parse(response.body);
-			/*for (let item in data) {
-				console.log(item + ": " + data[item]);
-			}*/
+			for (let item in data) {
+				let route = JSON.parse(data[item]);
+				let listItem = document.createElement("LI");
+				listItem.appendChild(document.createTextNode(route.features[0].properties.name));
+				listItem.setAttribute("class", "tourItem");
+				document.getElementById("elementList").appendChild(listItem);
+			}
 		}
 	});
 }
