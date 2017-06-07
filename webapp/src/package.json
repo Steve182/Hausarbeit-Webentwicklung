@@ -9,8 +9,8 @@
     "less":"lessc ./styles/styles.less ./styles.css",
     "minijs":"babili ./main.js > ./release/main.min.js",
     "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.min.css",
-    "build":"npm run lint && npm run js && npm run minijs && npm run minicss && cp ./js/MainServer.js ./release/mainserver.js",
-    "start":"node ./release/mainserver.js 8080",
+    "build":"npm run lint && npm run js && npm run minijs && npm run minicss",
+    "start":"node ../../server/MainServer.js",
     "debug":"npm run clean && npm run lint && npm run js && npm run less",
     "clean":"del /Q \".\\release\\styles.min.css\" && del /Q \".\\release\\main.min.js\" && del /Q \".\\main.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
