@@ -6,14 +6,17 @@
   "scripts": {
     "lint":"eslint ./js/*.js",
     "js":"browserify ./js/Main.js > ./main.js",
+    "jsdebug": "browserify ./js/Main.js > ./release/main.js",
     "less":"lessc ./styles/styles.less ./styles.css",
-    "minijs":"babili ./main.js > ./release/main.min.js",
-    "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.min.css",
+    "lessdebug": "lessc ./styles/styles.less ./release/styles.css",
+    "minijs":"babili ./main.js > ./release/main.js",
+    "minicss":"lessc --clean-css ./styles/styles.less ./release/styles.css",
     "build":"npm run lint && npm run js && npm run minijs && npm run minicss",
     "start":"node ../../server/MainServer.js",
-    "debug":"npm run clean && npm run lint && npm run js && npm run less",
-    "clean":"del /Q \".\\release\\styles.min.css\" && del /Q \".\\release\\main.min.js\" && del /Q \".\\main.js\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "debug":"npm run clean && npm run lint && npm run jsdebug && npm run lessdebug",
+    "clean":"npm run del ./release/main.js && npm run del ./release/styles.css && npm run del ./main.js && npm run del ./styles.css",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "del":"node ./js/DeleteFile.js"
   },
   "author": "Kevin Küchler, Stefan Fuhrmann",
   "license": "ISC"
