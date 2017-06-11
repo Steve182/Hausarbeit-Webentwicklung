@@ -3,6 +3,9 @@ const path = require("path");
 const express = require("express");
 
 let PORT = process.argv[2];
+if(PORT) {
+	PORT = 8080;
+}
 
 //Express-Server erstellen
 let httpServer = express();
