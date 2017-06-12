@@ -20,24 +20,41 @@ function main() {
 
 let liste = document.getElementById("elementList");
 
-/*liste.onclick(function (event) {
-});*/
+liste.onclick = function (event) {
+	let id = event.target.getAttribute("id");
+	request({
+		url: "http://localhost:8080/api/tracks:" + id,
+		json: true
+	}, function (error, response, body) {
+		if (error) {
+			console.log("Failed to fetch route " + id + ": " + error);
+		}
+		else {
+			//Antwort vom Server in JSON parsen
+			let data = JSON.parse(response.body);
+			console.log(data);
+		}
+	});
+};
 
 function loadTours() {
 	request({
-		url: "http://localhost:8080/tracks",
+		url: "http://localhost:8080/api/tracks?short=true",
 		json: true
 	}, function (error, response, body) {
 		if (error) {
 			console.log("Failed to fetch routes: " + error);
 		}
 		else {
-			console.log(response);
+			//Antwort vom Server in JSON parsen
 			let data = JSON.parse(response.body);
+
+			//Über jeden Track interieren
 			for (let item in data) {
-				let route = JSON.parse(data[item]);
+				console.log(item);
 				let listItem = document.createElement("LI");
-				listItem.appendChild(document.createTextNode(route.features[0].properties.name));
+				listItem.appendChild(document.createTextNode(data[item].name));
+				listItem.setAttribute("id", data[item].id);
 				listItem.setAttribute("class", "tourItem");
 				liste.appendChild(listItem);
 			}

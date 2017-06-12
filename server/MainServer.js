@@ -3,21 +3,38 @@ const path = require("path");
 const express = require("express");
 
 let PORT = process.argv[2];
-if(PORT) {
+if(!PORT) {
 	PORT = 8080;
 }
 
 //Express-Server erstellen
 let httpServer = express();
 
-httpServer.get("/tracks", (request, response) => {
-	let data = [];
-	console.log("Listing files in '" + __dirname + "/json/'...");
-	let fileList = fs.readdirSync(__dirname + "/json/");
-	for (let i = 0; i < fileList.length; i++) {
-		data.push(fs.readFileSync(__dirname + "/json/" + fileList[i], "utf8"));
+httpServer.get("/api/tracks", (request, response) => {
+	if(request.query.short && request.query.short === true) {
+		let data = [];
+		console.log("Listing files in '" + __dirname + "/json/'...");
+		let fileList = fs.readdirSync(__dirname + "/json/");
+		for (let i = 0; i < fileList.length; i++) {
+			let id = fileList[i].replace(".json", "");
+			let track = JSON.parse(fs.readFileSync(__dirname + "/json/" + fileList[i], "utf8"));
+			data.push({"id": id, "name": track.features[0].properties.name});
+		}
+		response.json(JSON.stringify(data));
 	}
-	response.json(JSON.stringify(data));
+	else {
+		let data = [];
+		console.log("Listing files in '" + __dirname + "/json/'...");
+		let fileList = fs.readdirSync(__dirname + "/json/");
+		for (let i = 0; i < fileList.length; i++) {
+			data.push(fs.readFileSync(__dirname + "/json/" + fileList[i], "utf8"));
+		}
+		response.json(JSON.stringify(data));
+	}
+});
+
+httpServer.get("/api/tracks:id", (request, response) => {
+	response.json(fs.readFileSync(__dirname + "/json/" + request.params.id.replace(":", "") + ".json", "utf8"));
 });
 
 httpServer.get("/", function (request, response) {
