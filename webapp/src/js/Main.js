@@ -1,6 +1,9 @@
 let request = require("request");
 let google = require("google-maps");
 
+let map;
+let route;
+
 function main() {
 	//Schlüssel zur Nutzung der Google API
 	google.KEY = "AIzaSyDHMcOZm-IQCO9n9fExRpuOOfc8I32JvvE";
@@ -12,7 +15,18 @@ function main() {
 			center: trier
 		};
 		//neues Map-Objekt mit Trier als Startpunkt erzeugen und in das Element mit der di "map" setzen
-		new g.maps.Map(document.getElementById("map"), options);
+		map = new g.maps.Map(document.getElementById("map"), options);
+
+		route = new g.maps.Polyline({
+			path: null,
+			geodesic: true,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+
+		route.setMap(map);
+
 		console.log("Map initialized!");
 	});
 	loadTours();
@@ -32,9 +46,25 @@ liste.onclick = function (event) {
 		else {
 			//Antwort vom Server in JSON parsen
 			let data = JSON.parse(JSON.stringify(response.body));
+			route.setPath(parseCoords(data.features[0].geometry.coordinates));
 		}
 	});
 };
+
+//aus JSON-Datei Koordinaten bauen, die Google akzeptiert
+function parseCoords(coords) {
+	let parsedCoords = [];
+	for (let i = 0; i < coords.length; i++) {
+		let coord = {
+			//Koordinaten umdrehen
+			lat: coords[i][1],
+			lng: coords[i][0]
+		};
+		parsedCoords.push(coord);
+	}
+
+	return parsedCoords;
+}
 
 function loadTours() {
 	request({
