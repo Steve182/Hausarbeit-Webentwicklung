@@ -31,8 +31,7 @@ liste.onclick = function (event) {
 		}
 		else {
 			//Antwort vom Server in JSON parsen
-			let data = JSON.parse(response.body);
-			console.log(data);
+			let data = JSON.parse(JSON.stringify(response.body));
 		}
 	});
 };
@@ -48,10 +47,8 @@ function loadTours() {
 		else {
 			//Antwort vom Server in JSON parsen
 			let data = JSON.parse(response.body);
-
 			//Über jeden Track interieren
 			for (let item in data) {
-				console.log(item);
 				let listItem = document.createElement("LI");
 				listItem.appendChild(document.createTextNode(data[item].name));
 				listItem.setAttribute("id", data[item].id);
