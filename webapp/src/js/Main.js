@@ -2,6 +2,7 @@ let request = require("request");
 let google = require("google-maps");
 
 let liste = document.getElementById("elementList");
+let heightDiv = document.getElementById("heightProfile");
 
 let map;
 let route;
@@ -10,6 +11,8 @@ let bounds;
 function main() {
 	//Schlüssel zur Nutzung der Google API
 	google.KEY = "AIzaSyDHMcOZm-IQCO9n9fExRpuOOfc8I32JvvE";
+
+	//Map laden
 	google.load(function (g) {
 		//Trier als "Startpunkt" angeben
 		let trier = { lat: 49.761784, lng: 6.659463 };
@@ -25,7 +28,7 @@ function main() {
 
 		//route initialisieren (path wird später bei Aufruf eines Tracks gesetzt)
 		route = new g.maps.Polyline({
-			path: null,
+			path: [],
 			geodesic: true,
 			strokeColor: "#FF0000",
 			strokeOpacity: 1.0,
@@ -72,6 +75,8 @@ liste.onclick = function (event) {
 
 			//richtig zoomen etc.
 			map.fitBounds(bounds);
+
+			createElevationProfile(heightDiv, coords);
 		}
 	});
 };
@@ -89,6 +94,26 @@ function parseCoords(coords) {
 	}
 
 	return parsedCoords;
+}
+
+function createElevationProfile(div, coords) {
+	let lowest = getLowestPoint(coords);
+}
+
+function getLowestPoint(coords) {
+	let lowest = 9000;
+	for (let i = 0; i < coords.length; ++i) {
+		if (coords[i][2] < lowest) {
+			lowest = coords[i][2];
+		}
+	}
+
+	//wenn ein niedrigster Punkt gefunden wurde diesen zurückgeben
+	if (lowest !== 9000) {
+		return lowest;
+	}
+
+	return null;
 }
 
 function loadTours() {
