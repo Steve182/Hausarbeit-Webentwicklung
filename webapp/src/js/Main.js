@@ -2,7 +2,7 @@ let request = require("request");
 let google = require("google-maps");
 
 let liste = document.getElementById("elementList");
-let heightDiv = document.getElementById("heightProfile");
+let heightProfile = document.getElementById("heightProfile");
 
 let map;
 let route;
@@ -76,7 +76,8 @@ liste.onclick = function (event) {
 			//richtig zoomen etc.
 			map.fitBounds(bounds);
 
-			createElevationProfile(heightDiv, coords);
+			//Höhenprofil erstellen
+			createElevationProfile(sumupHeightValues(coords));
 		}
 	});
 };
@@ -88,7 +89,8 @@ function parseCoords(coords) {
 		let coord = {
 			//Koordinaten umdrehen
 			lat: coords[i][1],
-			lng: coords[i][0]
+			lng: coords[i][0],
+			height: coords[i][2]
 		};
 		parsedCoords.push(coord);
 	}
@@ -96,15 +98,39 @@ function parseCoords(coords) {
 	return parsedCoords;
 }
 
-function createElevationProfile(div, coords) {
-	let lowest = getLowestPoint(coords);
+//Höhenprofil erstellen
+function createElevationProfile(coords) {
+	let line = document.getElementById("line");
+	let points = line.getAttribute("points");
+
+	//SVG-Breite durch Anzahl Koordinaten->Kurvenbreite immer gleich
+	let xFactor = 200 / coords.length;
+
+	//erster Punkt
+	points = "10, 90,";
+
+	//alle Punkte durchlaufen
+	for (let i = 0; i < coords.length; i++) {
+		//y-Wert auf SVG mappen
+		let value = 90 - ((coords[i] / 100) * 10);
+
+		//immer abwechselnd x und y Koordinate eines Punktes der Linie
+		points += `${Math.round(10 + (i * xFactor))}, ${Math.round(value)},`;
+	}
+
+	//letzter Punkt
+	points += `${10 + ((coords.length - 1) * xFactor)},90`;
+
+	//Punkte als Attribut setzen
+	line.setAttribute("points", points);
 }
 
+/*
 function getLowestPoint(coords) {
 	let lowest = 9000;
 	for (let i = 0; i < coords.length; ++i) {
-		if (coords[i][2] < lowest) {
-			lowest = coords[i][2];
+		if (coords[i] < lowest) {
+			lowest = coords[i];
 		}
 	}
 
@@ -114,6 +140,35 @@ function getLowestPoint(coords) {
 	}
 
 	return null;
+}
+
+function getHighestPoint(coords) {
+	let highest = 0;
+	for (let i = 0; i < coords.length; ++i) {
+		if (coords[i] > highest) {
+			highest = coords[i];
+		}
+	}
+
+	return highest;
+}
+*/
+
+//Punkte zusammenfassen
+function sumupHeightValues(coords) {
+	let val = coords[0].height;
+	let newCoords = [];
+	newCoords.push(val);
+
+	//alle Punkte durchlaufen, wenn Differenz größer als 5 -> ins Array packen
+	for (let i = 0; i < coords.length; ++i) {
+		if (coords[i].height < val - 5 || coords[i].height > val + 5) {
+			newCoords.push(coords[i].height);
+			val = coords[i].height;
+		}
+	}
+
+	return newCoords;
 }
 
 function loadTours() {
