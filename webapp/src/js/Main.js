@@ -1,12 +1,18 @@
 let request = require("request");
 let google = require("google-maps");
 
+//Tracks
+let data;
+
 let liste = document.getElementById("elementList");
-let heightProfile = document.getElementById("heightProfile");
 
 let map;
 let route;
 let bounds;
+
+let listItemHeight;
+let sideCount = 0;
+let numOfSides;
 
 function main() {
 	//Schlüssel zur Nutzung der Google API
@@ -102,9 +108,18 @@ function parseCoords(coords) {
 function createElevationProfile(coords) {
 	let line = document.getElementById("line");
 	let points = line.getAttribute("points");
+	let width = coords.length;
+
+	//wenn Breite unter 200-> Breite auf 200 setzen, sieht besser aus
+	if (width < 200) {
+		width = 200;
+	}
+
+	//Höhenprofil-Breite setzen: Breite + Padding
+	document.getElementById("heightProfile").setAttribute("width", width + 20);
 
 	//SVG-Breite durch Anzahl Koordinaten->Kurvenbreite immer gleich
-	let xFactor = 200 / coords.length;
+	let xFactor = width / coords.length;
 
 	//erster Punkt
 	points = "10, 90,";
@@ -115,11 +130,11 @@ function createElevationProfile(coords) {
 		let value = 90 - ((coords[i] / 100) * 10);
 
 		//immer abwechselnd x und y Koordinate eines Punktes der Linie
-		points += `${Math.round(10 + (i * xFactor))}, ${Math.round(value)},`;
+		points += `${Math.floor(10 + (i * xFactor))}, ${Math.floor(value)},`;
 	}
 
 	//letzter Punkt
-	points += `${10 + ((coords.length - 1) * xFactor)},90`;
+	points += `${10 + Math.floor(((coords.length - 1) * xFactor))},90`;
 
 	//Punkte als Attribut setzen
 	line.setAttribute("points", points);
@@ -156,6 +171,7 @@ function getHighestPoint(coords) {
 
 //Punkte zusammenfassen
 function sumupHeightValues(coords) {
+	//erster Punkt ist Referenzpunkt
 	let val = coords[0].height;
 	let newCoords = [];
 	newCoords.push(val);
@@ -181,17 +197,104 @@ function loadTours() {
 		}
 		else {
 			//Antwort vom Server in JSON parsen
-			let data = JSON.parse(response.body);
-			//Über jeden Track interieren
-			for (let item in data) {
-				let listItem = document.createElement("LI");
-				listItem.appendChild(document.createTextNode(data[item].name));
-				listItem.setAttribute("id", data[item].id);
-				listItem.setAttribute("class", "tourItem");
-				liste.appendChild(listItem);
-			}
+			data = JSON.parse(response.body);
+			console.log(data.length);
+			createList(data);
 		}
 	});
+}
+
+window.onresize = function () {
+	//zuerst alles löschen und zurücksetzen
+	deleteChildren(liste);
+	sideCount = 0;
+
+	//sideCount + 1, damit Anzeige bei 1 anfängt
+	document.getElementById("sideCount").innerHTML = sideCount + 1;
+
+	//Liste neu aufbauen
+	createList(data);
+};
+
+document.getElementById("left").onclick = function () {
+	//sideCount zwischen 0 und numOfSides halten
+	sideCount--;
+	if (sideCount < 0) {
+		sideCount += numOfSides;
+	}
+	sideCount %= numOfSides;
+
+	//sideCount + 1, damit Anzeige bei 1 anfängt
+	document.getElementById("sideCount").innerHTML = sideCount + 1;
+
+	createList(data);
+};
+
+document.getElementById("right").onclick = function () {
+	//sideCount zwischen 0 und numOfSides halten
+	sideCount++;
+	sideCount %= numOfSides;
+
+	//sideCount + 1, damit Anzeige bei 1 anfängt
+	document.getElementById("sideCount").innerHTML = sideCount + 1;
+
+	createList(data);
+};
+
+//alle Kindelemente eines Elements löschen
+function deleteChildren(element) {
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}
+}
+
+function getListItemHeight() {
+	//Dummy-listItem erstellen
+	let listItem = document.createElement("LI");
+	listItem.appendChild(document.createTextNode(data[0].name));
+	listItem.setAttribute("class", "tourItem");
+	liste.appendChild(listItem);
+
+	//Höhe herausfinden und Dummy-listItem wieder löschen
+	let listItemHeight = document.getElementsByClassName("tourItem")[0].clientHeight;
+	liste.removeChild(liste.firstChild);
+
+	return listItemHeight;
+}
+
+function createList(data) {
+	//alte Liste löschen
+	deleteChildren(liste);
+
+	//listItem-Höhe herausfinden
+	listItemHeight = getListItemHeight();
+
+	//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
+	let numOfElements = Math.floor(window.innerHeight / listItemHeight) - 2;
+
+	//Anzahl der Seiten berechnen
+	numOfSides = Math.floor(data.length / numOfElements);
+
+	//wenn Anzahl der Seiten nicht genau aufgeht->noch eine Seite hinzufügen
+	if (data.length % numOfElements !== 0) {
+		numOfSides++;
+	}
+
+	//so viele Elemente einfügen wie möglich
+	for (let i = 0; i < numOfElements; ++i) {
+		//wenn Ende von data erreicht ist aufhören
+		if (!data[(sideCount * numOfElements) + i]) {
+			break;
+		}
+		else {
+			//neues listItem erstellen und an Liste anhängen
+			let listItem = document.createElement("LI");
+			listItem.appendChild(document.createTextNode(data[(sideCount * numOfElements) + i].name));
+			listItem.setAttribute("id", data[(sideCount * numOfElements) + i].id);
+			listItem.setAttribute("class", "tourItem");
+			liste.appendChild(listItem);
+		}
+	}
 }
 
 main();

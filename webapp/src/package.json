@@ -31,6 +31,8 @@
     "build":"npm run lint && npm run lintserver && npm run js && npm run minijs && npm run minicss",
     "start":"node ../../server/MainServer.js",
     "debug":"npm run lint && npm run lintserver && npm run jsdebug && npm run lessdebug",
+    "debug_start":"npm run debug && npm run start",
+    "build_start":"npm run build && npm run start",
     "clean":"del-cli ./release/main.js && del-cli ./release/styles.css && del-cli ./main.js && del-cli ./styles.css && del-cli ./styles/styles.css && del-nodem",
     "del-nodem": " remove-node-modules ./node_modules",
     "test": "echo \"Error: no test specified\" && exit 1"
