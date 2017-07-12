@@ -10,7 +10,7 @@
     width: 25%;
     height: 100%;
     float: right;
-    background: red;
+    background: gray;
     align-content: center;
     overflow-y: hidden;
 }
@@ -33,6 +33,7 @@
 #buttons
 {
     padding: 5px;
+    padding-bottom: 0px;
 }
 
 #elementList
@@ -41,23 +42,45 @@
     -webkit-padding-start: 0px;
     -webkit-margin-before: 0px;
     padding: 5px;
+    padding-top: 1px;
 }
 
-.tourItem
+#elementList > li 
 {
     padding: 5px;
     white-space: nowrap;
     overflow: hidden;
 }
 
-.listElem1
+#elementList > li:hover
 {
-    background: darkgray;
+    white-space: normal;
+    overflow: auto;
+    cursor: pointer;
 }
 
-.listElem2
+
+/*.tourItem
+{
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.tourItem:hover 
+{
+    white-space: normal;
+    overflow: auto;
+}*/
+
+.tourItem0
 {
     background: gray;
+}
+
+.tourItem1
+{
+    background: white;  
 }
 
 #heightProfile
@@ -65,7 +88,6 @@
     position: absolute;
     top: 80%;
     left: 2%;
-    //width: 220;
     height: 100;
     background: black;
     opacity: 0.75;

@@ -291,7 +291,7 @@ function createList(data) {
 			let listItem = document.createElement("LI");
 			listItem.appendChild(document.createTextNode(data[(sideCount * numOfElements) + i].name));
 			listItem.setAttribute("id", data[(sideCount * numOfElements) + i].id);
-			listItem.setAttribute("class", "tourItem");
+			listItem.setAttribute("class", `tourItem${i % 2}`);
 			liste.appendChild(listItem);
 		}
 	}
