@@ -8,11 +8,12 @@ let liste = document.getElementById("elementList");
 
 let map;
 let route;
+let coords;
 let bounds;
 
 let listItemHeight;
 let sideCount = 0;
-let numOfSides;
+let numOfSides = 0;
 
 function main() {
 	//Schlüssel zur Nutzung der Google API
@@ -45,6 +46,8 @@ function main() {
 
 		console.log("Map initialized!");
 	});
+
+	//Tracks für Liste laden
 	loadTours();
 }
 
@@ -64,7 +67,7 @@ liste.onclick = function (event) {
 			let data = JSON.parse(JSON.stringify(response.body));
 
 			//aus erhaltener JSON richtige Koordinaten basteln
-			let coords = parseCoords(data.features[0].geometry.coordinates);
+			coords = parseCoords(data.features[0].geometry.coordinates);
 
 			//Koordinaten des gewählten Tracks als Pfad der Polyline setzen
 			route.setPath(coords);
@@ -198,7 +201,6 @@ function loadTours() {
 		else {
 			//Antwort vom Server in JSON parsen
 			data = JSON.parse(response.body);
-			console.log(data.length);
 			createList(data);
 		}
 	});
@@ -209,8 +211,7 @@ window.onresize = function () {
 	deleteChildren(liste);
 	sideCount = 0;
 
-	//sideCount + 1, damit Anzeige bei 1 anfängt
-	document.getElementById("sideCount").innerHTML = sideCount + 1;
+	setSidecountLabel(sideCount);
 
 	//Liste neu aufbauen
 	createList(data);
@@ -224,9 +225,7 @@ document.getElementById("left").onclick = function () {
 	}
 	sideCount %= numOfSides;
 
-	//sideCount + 1, damit Anzeige bei 1 anfängt
-	document.getElementById("sideCount").innerHTML = sideCount + 1;
-
+	setSidecountLabel(sideCount);
 	createList(data);
 };
 
@@ -235,11 +234,15 @@ document.getElementById("right").onclick = function () {
 	sideCount++;
 	sideCount %= numOfSides;
 
-	//sideCount + 1, damit Anzeige bei 1 anfängt
-	document.getElementById("sideCount").innerHTML = sideCount + 1;
+	setSidecountLabel(sideCount);
 
 	createList(data);
 };
+
+function setSidecountLabel(val) {
+	//sideCount + 1, damit Anzeige bei 1 anfängt
+	document.getElementById("sideCount").innerHTML = `${val + 1}/${numOfSides}`;
+}
 
 //alle Kindelemente eines Elements löschen
 function deleteChildren(element) {
@@ -295,6 +298,8 @@ function createList(data) {
 			liste.appendChild(listItem);
 		}
 	}
+
+	setSidecountLabel(sideCount);
 }
 
 main();
