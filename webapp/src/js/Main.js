@@ -5,6 +5,7 @@ let google = require("google-maps");
 let data;
 
 let liste = document.getElementById("elementList");
+let buttonDiv = document.getElementById("buttons");
 
 let map;
 let route;
@@ -82,11 +83,11 @@ liste.onclick = function (event) {
 				bounds.extend(coords[i]);
 			}
 
-			//richtig zoomen etc.
+			//richtig zoomen
 			map.fitBounds(bounds);
 
 			//Höhenprofil erstellen
-			createElevationProfile(sumupHeightValues(coords));
+			createElevationProfile(coords);
 		}
 	});
 };
@@ -107,40 +108,39 @@ function parseCoords(coords) {
 	return parsedCoords;
 }
 
-//Höhenprofil erstellen
 function createElevationProfile(coords) {
 	let line = document.getElementById("line");
-	let points = line.getAttribute("points");
-	let width = coords.length;
+	let svg = document.getElementById("heightProfile");
 
-	//wenn Breite unter 200-> Breite auf 200 setzen, sieht besser aus
-	if (width < 200) {
-		width = 200;
-	}
+	//Höhe und Breite des SVG-Elements
+	let height = svg.clientHeight;
+	let width = svg.clientWidth;
 
-	//Höhenprofil-Breite setzen: Breite + Padding
-	document.getElementById("heightProfile").setAttribute("width", width + 20);
+	let highest = getHighestPoint(coords);
 
-	//SVG-Breite durch Anzahl Koordinaten->Kurvenbreite immer gleich
-	let xFactor = width / coords.length;
+	//x-Koordinaten mappen
+	let xScale = width / coords.length;
 
-	//erster Punkt
-	points = "10, 90,";
+	//erster Punkt (bei maximaler Höhe, damit Kurve richtig ausgefüllt ist)
+	let points = `0,${height},`;
 
 	//alle Punkte durchlaufen
-	for (let i = 0; i < coords.length; i++) {
-		//y-Wert auf SVG mappen
-		let value = 90 - ((coords[i] / 100) * 10);
+	for (let i = 0; i < coords.length; ++i) {
+		//y-Koordinate mappen
+		let value = (coords[i].height / highest) * height;
 
-		//immer abwechselnd x und y Koordinate eines Punktes der Linie
-		points += `${Math.floor(10 + (i * xFactor))}, ${Math.floor(value)},`;
+		//Wert von SVG-Höhe abziehen, da ansonsten "Negativprofil"
+		points += `${i},${height - value},`;
 	}
 
-	//letzter Punkt
-	points += `${10 + Math.floor(((coords.length - 1) * xFactor))},90`;
+	//letzter Punkt (bei maximaler Höhe, damit Kurve richtig ausgefüllt ist)
+	points += `${coords.length},${height}`;
 
-	//Punkte als Attribut setzen
+	//Points setzen
 	line.setAttribute("points", points);
+
+	//in x-Richtung skalieren -> immer gleiche Breite
+	line.setAttribute("transform", `scale(${xScale},1)`);
 }
 
 /*
@@ -158,20 +158,21 @@ function getLowestPoint(coords) {
 	}
 
 	return null;
-}
+}*/
 
+//höchsten Punkt eines Koordinatensets herausfinden
 function getHighestPoint(coords) {
 	let highest = 0;
 	for (let i = 0; i < coords.length; ++i) {
-		if (coords[i] > highest) {
-			highest = coords[i];
+		if (coords[i].height > highest) {
+			highest = coords[i].height;
 		}
 	}
 
 	return highest;
 }
-*/
 
+/*
 //Punkte zusammenfassen
 function sumupHeightValues(coords) {
 	//erster Punkt ist Referenzpunkt
@@ -189,6 +190,7 @@ function sumupHeightValues(coords) {
 
 	return newCoords;
 }
+*/
 
 function loadTours() {
 	request({
@@ -273,7 +275,7 @@ function createList(data) {
 	listItemHeight = getListItemHeight();
 
 	//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
-	let numOfElements = Math.floor(window.innerHeight / listItemHeight) - 2;
+	let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight) / listItemHeight);
 
 	//Anzahl der Seiten berechnen
 	numOfSides = Math.floor(data.length / numOfElements);

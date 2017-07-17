@@ -1,3 +1,6 @@
+@hpwidth: 15%;
+@hpheight: 15%;
+
 #map 
 {
     width: 75%;
@@ -54,24 +57,10 @@
 
 #elementList > li:hover
 {
-    white-space: normal;
-    overflow: auto;
+    //white-space: normal;
+   //overflow: auto;
     cursor: pointer;
 }
-
-
-/*.tourItem
-{
-    padding: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.tourItem:hover 
-{
-    white-space: normal;
-    overflow: auto;
-}*/
 
 .tourItem0
 {
@@ -83,14 +72,22 @@
     background: white;  
 }
 
-#heightProfile
+#hpbg
 {
     position: absolute;
-    top: 80%;
+    top: 75%;
     left: 2%;
-    height: 100;
+    width: @hpwidth;
+    height: @hpheight;
+    padding: 10px;
     background: black;
     opacity: 0.75;
+}
+
+#heightProfile
+{
+    width: @hpwidth + (100 - @hpwidth);
+    height: @hpheight + (100 - @hpheight);
 }
 
 #line
@@ -98,6 +95,7 @@
     width: 100%;
     height: 100%;
     fill: white;
+    opacity: 100%;
 }
 
 #output
