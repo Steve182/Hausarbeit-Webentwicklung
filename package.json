@@ -1,0 +1,46 @@
+{
+  "name": "hausarbeit-webentw",
+  "version": "1.0.0",
+  "description": "Hausarbeit Webentwicklung",
+  "main": "./js/Main.js",
+  "dependencies": {
+    "express": ">= 4.15.3",
+    "request": ">= 2.81.0",
+    "google-maps":">= 3.2.1",
+    "fs": ">= 0.0.1",
+    "path": ">= 0.12.7",
+    "delete": ">= 1.0.1"
+  },
+  "devDependencies": {
+    "browserify": ">= 14.4.0",
+    "eslint": ">= 4.0.0",
+    "less": ">= 2.7.2",
+    "less-plugin-clean-css": ">= 1.5.1",
+    "babili": ">= 0.1.3",
+    "del-cli": ">= 1.0.0",
+    "make-dir-cli": ">= 1.0.0",
+    "cp-cli": ">= 1.0.2"
+  },
+  "scripts": {
+    "lint":"eslint ./webapp/src/js/*.js",
+    "lintserver": "eslint ./server/*.js",
+    "js":"browserify ./webapp/src/js/Main.js > ./webapp/src/temp/main.js",
+    "jsdebug": "browserify ./webapp/src/js/Main.js > ./webapp/src/release/main.js",
+    "less":"lessc ./webapp/src/styles/styles.less ./webapp/src/temp/styles.css",
+    "lessdebug": "lessc ./webapp/src/styles/styles.less ./webapp/src/release/styles.css",
+    "minijs":"babili ./webapp/src/temp/main.js > ./webapp/src/release/main.js",
+    "minicss":"lessc --clean-css ./webapp/src/styles/styles.less ./webapp/src/release/styles.css",
+    "build":"npm run make_temp && npm run make_release && npm run cp_html && npm run lint && npm run lintserver && npm run js && npm run minijs && npm run minicss",
+    "start":"node ./server/MainServer.js",
+    "debug":"npm run make_release && npm run cp_html && npm run lint && npm run lintserver && npm run jsdebug && npm run lessdebug",
+    "debug_start":"npm run debug && npm run start",
+    "build_start":"npm run build && npm run start",
+    "clean":"del-cli ./webapp/src/release && del-cli ./webapp/src/temp && del-cli ./node_modules",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "make_temp": "make-dir ./webapp/src/temp",
+    "make_release": "make-dir ./webapp/src/release",
+    "cp_html": "cp-cli ./webapp/src/html ./webapp/src/release"
+  },
+  "author": "Kevin Küchler, Stefan Fuhrmann",
+  "license": "ISC"
+}

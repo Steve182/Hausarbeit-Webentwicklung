@@ -1,9 +1,8 @@
 #Compiled sources#
 ##################
-main.min.js
-main.js
-styles.min.css
-styles.css
+release/
+temp/
+node_modules/
 
 #Lint config#
 #################
