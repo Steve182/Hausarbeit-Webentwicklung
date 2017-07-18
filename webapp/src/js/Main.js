@@ -119,8 +119,11 @@ function createElevationProfile(coords) {
 	let svg = document.getElementById("heightProfile");
 
 	//Höhe und Breite des SVG-Elements
-	let height = svg.clientHeight;
-	let width = svg.clientWidth;
+	//notwendig, da clientHeight, clientWidth für Firefox nicht funktioniert
+	let height = svg.clientHeight || svg.parentNode.clientHeight;
+	let width = svg.clientWidth || svg.parentNode.clientWidth;
+
+	console.log(svg.clientHeight);
 
 	let highest = getHighestPoint(coords);
 
