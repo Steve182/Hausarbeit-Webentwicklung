@@ -7,6 +7,8 @@ let data;
 let liste = document.getElementById("elementList");
 let buttonDiv = document.getElementById("buttons");
 
+let nameDiv = document.getElementById("nameDiv");
+
 let map;
 let route;
 let coords;
@@ -88,6 +90,10 @@ liste.onclick = function (event) {
 
 			//Höhenprofil erstellen
 			createElevationProfile(coords);
+
+			//Namen komplett anzeigen
+			nameDiv.innerHTML = event.target.innerHTML;
+			nameDiv.style.display = "inline-block";
 		}
 	});
 };
@@ -275,7 +281,7 @@ function createList(data) {
 	listItemHeight = getListItemHeight();
 
 	//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
-	let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight) / listItemHeight);
+	let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight) / listItemHeight) - 1;
 
 	//Anzahl der Seiten berechnen
 	numOfSides = Math.floor(data.length / numOfElements);
