@@ -14,7 +14,6 @@ let route;
 let coords;
 let bounds;
 
-let listItemHeight;
 let sideCount = 0;
 let numOfSides = 0;
 
@@ -59,11 +58,11 @@ liste.onclick = function (event) {
 	let id = event.target.getAttribute("id");
 	request({
 		//nur ausgewählten Track laden
-		url: "http://localhost:8080/api/tracks:" + id,
+		url: `http://${window.location.host}/api/tracks:${id}`,
 		json: true
 	}, function (error, response) {
 		if (error) {
-			console.log("Failed to fetch route " + id + ": " + error);
+			console.log(`Failed to fetch route ${id}:${error}`);
 		}
 		else {
 			//Antwort vom Server in JSON parsen
@@ -123,8 +122,6 @@ function createElevationProfile(coords) {
 	let height = svg.clientHeight || svg.parentNode.clientHeight;
 	let width = svg.clientWidth || svg.parentNode.clientWidth;
 
-	console.log(svg.clientHeight);
-
 	let highest = getHighestPoint(coords);
 
 	//x-Koordinaten mappen
@@ -151,23 +148,6 @@ function createElevationProfile(coords) {
 	//in x-Richtung skalieren -> immer gleiche Breite
 	line.setAttribute("transform", `scale(${xScale},1)`);
 }
-
-/*
-function getLowestPoint(coords) {
-	let lowest = 9000;
-	for (let i = 0; i < coords.length; ++i) {
-		if (coords[i] < lowest) {
-			lowest = coords[i];
-		}
-	}
-
-	//wenn ein niedrigster Punkt gefunden wurde diesen zurückgeben
-	if (lowest !== 9000) {
-		return lowest;
-	}
-
-	return null;
-}*/
 
 //höchsten Punkt eines Koordinatensets herausfinden
 function getHighestPoint(coords) {
@@ -203,11 +183,11 @@ function sumupHeightValues(coords) {
 
 function loadTours() {
 	request({
-		url: "http://localhost:8080/api/tracks?short=true",
+		url: `http://${window.location.host}/api/tracks?short=true`,
 		json: true
 	}, function (error, response) {
 		if (error) {
-			console.log("Failed to fetch routes: " + error);
+			console.log(`Failed to fetch routes: ${error}`);
 		}
 		else {
 			//Antwort vom Server in JSON parsen
@@ -222,7 +202,7 @@ window.onresize = function () {
 	deleteChildren(liste);
 	sideCount = 0;
 
-	setSidecountLabel(sideCount);
+	setSidecountLabel(sideCount, numOfSides);
 
 	//Liste neu aufbauen
 	createList(data);
@@ -236,7 +216,7 @@ document.getElementById("left").onclick = function () {
 	}
 	sideCount %= numOfSides;
 
-	setSidecountLabel(sideCount);
+	setSidecountLabel(sideCount, numOfSides);
 	createList(data);
 };
 
@@ -245,12 +225,12 @@ document.getElementById("right").onclick = function () {
 	sideCount++;
 	sideCount %= numOfSides;
 
-	setSidecountLabel(sideCount);
+	setSidecountLabel(sideCount, numOfSides);
 
 	createList(data);
 };
 
-function setSidecountLabel(val) {
+function setSidecountLabel(val, numOfSides) {
 	//sideCount + 1, damit Anzeige bei 1 anfängt
 	document.getElementById("sideCount").innerHTML = `${val + 1}/${numOfSides}`;
 }
@@ -277,40 +257,45 @@ function getListItemHeight() {
 }
 
 function createList(data) {
-	//alte Liste löschen
-	deleteChildren(liste);
-
-	//listItem-Höhe herausfinden
-	listItemHeight = getListItemHeight();
-
-	//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
-	let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight) / listItemHeight) - 1;
-
-	//Anzahl der Seiten berechnen
-	numOfSides = Math.floor(data.length / numOfElements);
-
-	//wenn Anzahl der Seiten nicht genau aufgeht->noch eine Seite hinzufügen
-	if (data.length % numOfElements !== 0) {
-		numOfSides++;
+	if (window.innerHeight < buttonDiv.clientHeight + 50) {
+		setSidecountLabel(-1, 0);
 	}
+	else {
+		//alte Liste löschen
+		deleteChildren(liste);
 
-	//so viele Elemente einfügen wie möglich
-	for (let i = 0; i < numOfElements; ++i) {
-		//wenn Ende von data erreicht ist aufhören
-		if (!data[(sideCount * numOfElements) + i]) {
-			break;
+		//listItem-Höhe herausfinden
+		let listItemHeight = getListItemHeight();
+
+		//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
+		let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight - 10) / listItemHeight);
+
+		//Anzahl der Seiten berechnen
+		numOfSides = Math.floor(data.length / numOfElements);
+
+		//wenn Anzahl der Seiten nicht genau aufgeht->noch eine Seite hinzufügen
+		if (data.length % numOfElements !== 0) {
+			numOfSides++;
 		}
-		else {
-			//neues listItem erstellen und an Liste anhängen
-			let listItem = document.createElement("LI");
-			listItem.appendChild(document.createTextNode(data[(sideCount * numOfElements) + i].name));
-			listItem.setAttribute("id", data[(sideCount * numOfElements) + i].id);
-			listItem.setAttribute("class", `tourItem${i % 2}`);
-			liste.appendChild(listItem);
+
+		//so viele Elemente einfügen wie möglich
+		for (let i = 0; i < numOfElements; ++i) {
+			//wenn Ende von data erreicht ist aufhören
+			if (!data[(sideCount * numOfElements) + i]) {
+				break;
+			}
+			else {
+				//neues listItem erstellen und an Liste anhängen
+				let listItem = document.createElement("LI");
+				listItem.appendChild(document.createTextNode(data[(sideCount * numOfElements) + i].name));
+				listItem.setAttribute("id", data[(sideCount * numOfElements) + i].id);
+				listItem.setAttribute("class", `tourItem${i % 2}`);
+				liste.appendChild(listItem);
+			}
 		}
+
+		setSidecountLabel(sideCount, numOfSides);
 	}
-
-	setSidecountLabel(sideCount);
 }
 
 main();
