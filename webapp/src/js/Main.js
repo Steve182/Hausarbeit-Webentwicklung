@@ -64,7 +64,7 @@ liste.onclick = function (event) {
 		if (error) {
 			console.log(`Failed to fetch route ${id}:${error}`);
 		}
-		else {
+		else if (!isNaN(parseInt(id))) {
 			//Antwort vom Server in JSON parsen
 			let data = JSON.parse(JSON.stringify(response.body));
 
