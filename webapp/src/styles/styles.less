@@ -14,7 +14,6 @@
     width: 25%;
     height: 100%;
     background: gray;
-    align-content: center;
 }
 
 #left 
@@ -50,6 +49,7 @@
 #elementList > li 
 {
     padding: 5px;
+    //Keine neue Zeile beginnen
     white-space: nowrap;
     overflow: hidden;
 }
@@ -82,7 +82,7 @@
     opacity: 0.75;
 }
 
-#heightProfile
+#elevationProfile
 {
     //Breite und Höhe 100% vom Hintergrund
     width: @hpwidth + (100 - @hpwidth);
@@ -101,19 +101,19 @@
 {
     position: absolute;
     top: 2%;
-    left: 65%;
-    min-width: 8%;
-    width: 8%;
+    right: 27%;
+    min-width: 150px;
+    width: 150px;
     background: black;
     opacity: 0.75;
     color: white;
     padding: 5px;
+    //Soll erst angezeigt werden, wenn Track ausgewählt
     display: none;
 }
 
 body
 {
-    min-height: 700px;
     overflow-y: hidden;
     font-family: Arial, Helvetica, sans-serif;
 }

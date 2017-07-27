@@ -1,7 +1,7 @@
 var ElevationProfile = ElevationProfile || (function () {
 	function createElevationProfile(coords) {
 		let line = document.getElementById("line");
-		let svg = document.getElementById("heightProfile");
+		let svg = document.getElementById("elevationProfile");
 
 		//Höhe und Breite des SVG-Elements
 		//notwendig, da clientHeight, clientWidth für Firefox nicht funktioniert

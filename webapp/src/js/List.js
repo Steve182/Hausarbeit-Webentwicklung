@@ -35,7 +35,7 @@ var List = List || (function () {
 			let listItemHeight = getListItemHeight(data);
 
 			//Anzahl Elemente für eine Seite = Fensterhöhe : Itemhöhe - 2 -> Buttons oben abziehen
-			let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight - 10) / listItemHeight);
+			let numOfElements = Math.floor((window.innerHeight - buttonDiv.clientHeight - 10) / (listItemHeight + 1));
 
 			//Anzahl der Seiten berechnen
 			numOfSides = Math.floor(data.length / numOfElements);

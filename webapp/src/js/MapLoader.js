@@ -5,6 +5,7 @@ var MapLoader = MapLoader || (function () {
 	let route;
 	let coords;
 	let bounds;
+	let trackSet;
 
 	function initMap() {
 		//Schlüssel zur Nutzung der Google API
@@ -56,13 +57,17 @@ var MapLoader = MapLoader || (function () {
 		for (let i = 0; i < coords.length; ++i) {
 			bounds.extend(coords[i]);
 		}
+		trackSet = true;
 
 		//richtig zoomen
 		updateZoom();
 	}
 
 	function updateZoom() {
-		map.fitBounds(bounds);
+		//Prüfen, ob Track gesetzt, da sonst in den Ozean gezoomt wird
+		if (trackSet) {
+			map.fitBounds(bounds);
+		}
 	}
 
 	//aus JSON-Datei Koordinaten bauen, die Google akzeptiert
