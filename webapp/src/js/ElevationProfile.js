@@ -8,7 +8,9 @@ var ElevationProfile = ElevationProfile || (function () {
 		let height = svg.clientHeight || svg.parentNode.clientHeight;
 		let width = svg.clientWidth || svg.parentNode.clientWidth;
 
-		let highest = getHighestPoint(coords);
+		let lowest = getLowestPoint(coords);
+		let highest = getHighestPoint(coords) - lowest;
+		console.log("Lowest: " + lowest + ", highest: " + highest);
 
 		//x-Koordinaten mappen
 		let xScale = width / coords.length;
@@ -19,7 +21,7 @@ var ElevationProfile = ElevationProfile || (function () {
 		//alle Punkte durchlaufen
 		for (let i = 0; i < coords.length; ++i) {
 			//y-Koordinate mappen
-			let value = (coords[i].height / highest) * height;
+			let value = ((coords[i].height - lowest) / highest) * height;
 
 			//Wert von SVG-Höhe abziehen, da ansonsten "Negativprofil"
 			points += `${i},${height - value},`;
@@ -45,6 +47,16 @@ var ElevationProfile = ElevationProfile || (function () {
 		}
 
 		return highest;
+	}
+
+	function getLowestPoint(coords) {
+		let lowest = 1000000;
+		for (let i = 0; i < coords.length; ++i) {
+			if (coords[i].height < lowest) {
+				lowest = coords[i].height;
+			}
+		}
+		return lowest;
 	}
 
 	module.exports.createElevationProfile = createElevationProfile;

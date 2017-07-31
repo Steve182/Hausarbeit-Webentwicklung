@@ -39,27 +39,30 @@ function loadTours() {
 //globalen click-Listener an Liste anmelden
 List.liste.onclick = function (event) {
 	let id = event.target.getAttribute("id");
-	request({
-		//nur ausgewählten Track laden
-		url: `http://${window.location.host}/api/tracks:${id}`,
-		json: true
-	}, function (error, response) {
-		if (error) {
-			console.log(`Failed to fetch route ${id}:${error}`);
-		}
-		else if (!isNaN(parseInt(id))) {
-			//Antwort vom Server in JSON parsen
-			let data = JSON.parse(JSON.stringify(response.body));
-			MapLoader.showTour(data);
+	//Prüfen, ob Element oder Liste angeklickt wurde
+	if (!isNaN(parseInt(id))) {
+		request({
+			//nur ausgewählten Track laden
+			url: `http://${window.location.host}/api/tracks:${id}`,
+			json: true
+		}, function (error, response) {
+			if (error) {
+				console.log(`Failed to fetch route ${id}:${error}`);
+			}
+			else {
+				//Antwort vom Server in JSON parsen
+				let data = JSON.parse(JSON.stringify(response.body));
+				MapLoader.showTour(data);
 
-			//Höhenprofil erstellen
-			ElevationProfile.createElevationProfile(MapLoader.coords);
+				//Höhenprofil erstellen
+				ElevationProfile.createElevationProfile(MapLoader.coords);
 
-			//Namen komplett anzeigen
-			nameDiv.innerHTML = event.target.innerHTML;
-			nameDiv.style.display = "inline-block";
-		}
-	});
+				//Namen komplett anzeigen
+				nameDiv.innerHTML = event.target.innerHTML;
+				nameDiv.style.display = "inline-block";
+			}
+		});
+	}
 };
 
 document.getElementById("left").onclick = function () {
